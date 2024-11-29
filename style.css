@@ -1,0 +1,26 @@
+.row {
+  display: flex;
+  flex-direction: row;
+}
+.cell {
+  margin: 0px;
+  width: 100px;
+  height: 100px;
+  border: 2px solid darkgreen;
+  font-size: 80px;
+  text-align: center;
+}
+.wall {
+  background-color: green;
+}
+.mouse {
+  background-image: url("images/mouse.png");
+  background-size: cover;
+  background-position: center;
+}
+.cheese {
+  background-image: url("images/cheese.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
