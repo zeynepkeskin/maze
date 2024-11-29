@@ -9,8 +9,9 @@ let curr = {
   x: 0,
   y: 0,
 };
+let branches = [];
 
-let maze = generateMaze(8, 8);
+let maze = generateMaze(17, 9);
 putCheese();
 function putCheese() {
   for (let i = maze.length - 1; i > -1; i--) {
@@ -22,7 +23,18 @@ function putCheese() {
     }
   }
 }
-
+putMouse();
+function putMouse() {
+  for (let i = 0; i < maze.length; i++) {
+    for (let j = 0; j < maze[i].length; j++) {
+      if (maze[i][j] === blockType.path) {
+        maze[i][j] = blockType.mouse;
+        curr = { x: i, y: j };
+        return;
+      }
+    }
+  }
+}
 function drawMaze() {
   maze[curr.x][curr.y] = blockType.mouse;
   let html = "";
@@ -37,7 +49,7 @@ function drawMaze() {
           html += '<div class="cell"></div>';
           break;
         case blockType.visited:
-          html += '<div class="cell"></div>';
+          html += '<div class="cell visited"></div>';
           break;
         case blockType.mouse:
           html += '<div class="cell mouse"></div>';
@@ -54,39 +66,42 @@ function drawMaze() {
 }
 
 drawMaze();
-setInterval(move, 1000);
+move();
 
 function getBlocktypeAt(pos) {
   if (pos === null) return null;
+  if (maze[pos.x][pos.y] === blockType.cheese) {
+    throw "Game Over";
+  }
   return maze[pos.x][pos.y];
 }
 
 function move() {
-  let down = getDown();
-  if (getBlocktypeAt(down) === 0) {
-    curr = down;
-    return drawMaze();
-  }
+  try {
+    let down = getDown();
+    if (getBlocktypeAt(down) === 0) branches.push(down);
+    let right = getRight();
+    if (getBlocktypeAt(right) === 0) branches.push(right);
+    let left = getLeft();
+    if (getBlocktypeAt(left) === 0) branches.push(left);
+    let up = getUp();
+    if (getBlocktypeAt(up) === 0) branches.push(up);
 
-  let right = getRight();
-  if (getBlocktypeAt(right) === 0) {
-    curr = right;
-    return drawMaze();
+    curr = branches.pop();
+    if (curr) drawMaze();
+    setTimeout(move, 100);
+  } catch (err) {
+    gameOver();
   }
-  let left = getLeft();
-  if (getBlocktypeAt(left) === 0) {
-    curr = left;
-    return drawMaze();
-  }
-  let up = getUp();
-  if (getBlocktypeAt(up) === 0) {
-    curr = up;
-    return drawMaze();
-  }
+}
+
+function gameOver() {
+  document.querySelector(".gameover").style.display = "block";
 }
 
 function getLeft() {
   if (curr.y == 0) return null;
+
   return {
     x: curr.x,
     y: curr.y - 1,
