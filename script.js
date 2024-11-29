@@ -9,24 +9,27 @@ let curr = {
   x: 0,
   y: 0,
 };
-const arr = [
-  [0, 1, 1, 1, 0, 1, 1, 1],
-  [0, 0, 1, 0, 0, 1, 1, 1],
-  [1, 0, 1, 1, 1, 0, 1, 1],
-  [0, 0, 0, 3, 1, 0, 1, 1],
-  [0, 0, 0, 3, 1, 0, 1, 1],
-  [0, 0, 0, 3, 1, 0, 1, 1],
-  [0, 0, 0, 3, 1, 0, 1, 1],
-  [0, 0, 0, 3, 1, 0, 1, 1],
-];
+
+let maze = generateMaze(8, 8);
+putCheese();
+function putCheese() {
+  for (let i = maze.length - 1; i > -1; i--) {
+    for (let j = maze[i].length - 1; j > -1; j--) {
+      if (maze[i][j] === blockType.path) {
+        maze[i][j] = blockType.cheese;
+        return;
+      }
+    }
+  }
+}
 
 function drawMaze() {
-  arr[curr.x][curr.y] = blockType.mouse;
+  maze[curr.x][curr.y] = blockType.mouse;
   let html = "";
-  for (let i = 0; i < arr.length; i++) {
+  for (let i = 0; i < maze.length; i++) {
     html += '<div class="row">';
-    for (let j = 0; j < arr[i].length; j++) {
-      switch (arr[i][j]) {
+    for (let j = 0; j < maze[i].length; j++) {
+      switch (maze[i][j]) {
         case blockType.wall:
           html += '<div class="cell wall"></div>';
           break;
@@ -34,7 +37,7 @@ function drawMaze() {
           html += '<div class="cell"></div>';
           break;
         case blockType.visited:
-          html += '<div class="cell">V</div>';
+          html += '<div class="cell"></div>';
           break;
         case blockType.mouse:
           html += '<div class="cell mouse"></div>';
@@ -47,7 +50,7 @@ function drawMaze() {
     html += "</div>";
   }
   document.querySelector(".maze").innerHTML = html;
-  arr[curr.x][curr.y] = blockType.visited;
+  maze[curr.x][curr.y] = blockType.visited;
 }
 
 drawMaze();
@@ -55,7 +58,7 @@ setInterval(move, 1000);
 
 function getBlocktypeAt(pos) {
   if (pos === null) return null;
-  return arr[pos.x][pos.y];
+  return maze[pos.x][pos.y];
 }
 
 function move() {
@@ -90,7 +93,7 @@ function getLeft() {
   };
 }
 function getRight() {
-  if (curr.y == arr[0].length - 1) return null;
+  if (curr.y == maze[0].length - 1) return null;
   return {
     x: curr.x,
     y: curr.y + 1,
@@ -104,7 +107,7 @@ function getUp() {
   };
 }
 function getDown() {
-  if (curr.x == arr.length - 1) return null;
+  if (curr.x == maze.length - 1) return null;
   return {
     x: curr.x + 1,
     y: curr.y,
